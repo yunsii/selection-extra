@@ -7,8 +7,8 @@
 
 import React, { useEffect, useRef } from 'react'
 import {
-  createElementCacheSelectionListener,
-  createElementSelectionChangeListener,
+  createCacheSelectionListener,
+  createSelectionChangeListener,
 } from 'selection-extra'
 
 export default function Demo() {
@@ -24,7 +24,7 @@ export default function Demo() {
       return
     }
 
-    const { disposer, restorer } = createElementCacheSelectionListener(divNode)
+    const { disposer, restorer } = createCacheSelectionListener(divNode)
 
     divRestorerRef.current = restorer
     return () => {
@@ -39,7 +39,7 @@ export default function Demo() {
       return
     }
 
-    const divSelectionChangeDisposer = createElementSelectionChangeListener(
+    const divSelectionChangeDisposer = createSelectionChangeListener(
       divEditableNode,
       () => {
         console.log(
@@ -52,7 +52,7 @@ export default function Demo() {
     const {
       disposer: elementCacheSelectionDisposer,
       restorer: elementCacheSelectionRestorer,
-    } = createElementCacheSelectionListener(divEditableNode)
+    } = createCacheSelectionListener(divEditableNode)
 
     divEditableRestorerRef.current = elementCacheSelectionRestorer
 

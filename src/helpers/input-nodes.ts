@@ -12,17 +12,13 @@ export function isInputNode(node?: Node | null): node is InputNode {
 
 const INPUT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
-export function createInputSelectionChangeListener<T extends Node>(
+export function createInputSelectionChangeListener<T extends InputNode>(
   node: T,
   callback: (node: T) => void,
 ) {
-  if (!isInputNode(node)) {
-    return
-  }
-
   // 确保 selection change 每个节点只监听一次
   if (isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)) {
-    return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
+    return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
   }
 
   isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)
@@ -43,7 +39,7 @@ export function createInputSelectionChangeListener<T extends Node>(
   }
 
   INPUT_SELECTION_CHANGE_DISPOSER_MAP.set(node, disposer)
-  return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
+  return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
 }
 
 const INPUT_SELECTIONS = new Map<InputNode, [number, number]>()
@@ -53,11 +49,7 @@ const INPUT_SELECTIONS = new Map<InputNode, [number, number]>()
  *
  * 返回 disposer 函数
  */
-export function cacheInputSelection<T extends Node>(node: T) {
-  if (!isInputNode(node)) {
-    return
-  }
-
+export function cacheInputSelection<T extends InputNode>(node: T) {
   // node 未被选择过
   if (!node.selectionStart || !node.selectionEnd) {
     return
@@ -70,11 +62,7 @@ export function cacheInputSelection<T extends Node>(node: T) {
   }
 }
 
-export function restoreInputSelection<T extends Node>(node?: T | null) {
-  if (!isInputNode(node)) {
-    return
-  }
-
+export function restoreInputSelection<T extends InputNode>(node: T) {
   node.focus()
 
   const cacheSelection = INPUT_SELECTIONS.get(node)
@@ -97,11 +85,7 @@ export function createInputCacheSelectionListener<T extends Node>(
     cacheInputSelection(node)
   }
 
-  node.addEventListener('blur', handler)
-
-  const disposer = () => {
-    node.removeEventListener('blur', handler)
-  }
+  const disposer = createInputSelectionChangeListener(node, handler)
 
   return {
     disposer,

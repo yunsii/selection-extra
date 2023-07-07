@@ -24,7 +24,7 @@ export function createElementSelectionChangeListener<T extends HTMLElement>(
 ) {
   // 确保 selection change 每个节点只监听一次
   if (isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)) {
-    return ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
+    return ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
   }
 
   markListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)
@@ -52,7 +52,7 @@ export function createElementSelectionChangeListener<T extends HTMLElement>(
   }
 
   ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.set(node, disposer)
-  return ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
+  return ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
 }
 
 const CONTENTEDITABLE_SELECTIONS = new Map<HTMLElement, Range[]>()
@@ -89,13 +89,7 @@ export function cacheElementSelection<T extends HTMLElement>(node: T) {
   }
 }
 
-export function restoreElementSelection<T extends HTMLElement>(
-  node?: T | null,
-) {
-  if (!(node instanceof HTMLElement)) {
-    return
-  }
-
+export function restoreElementSelection<T extends HTMLElement>(node: T) {
   node.focus()
 
   const cacheRanges = CONTENTEDITABLE_SELECTIONS.get(node)
@@ -119,7 +113,7 @@ export function restoreElementSelection<T extends HTMLElement>(
  * 创建缓存 Selection 的监听器
  */
 export function createElementCacheSelectionListener<T extends HTMLElement>(
-  node?: T | null,
+  node: T,
 ) {
   if (!(node instanceof HTMLElement)) {
     throw new TypeError(`node is not instance of HTMLElement`)

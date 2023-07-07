@@ -7,8 +7,8 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import {
-  createInputCacheSelectionListener,
-  createInputSelectionChangeListener,
+  createCacheSelectionListener,
+  createSelectionChangeListener,
 } from 'selection-extra'
 
 export default function Demo() {
@@ -26,15 +26,12 @@ export default function Demo() {
       return
     }
 
-    const inputDisposer = createInputSelectionChangeListener(inputNode, () => {
+    const inputDisposer = createSelectionChangeListener(inputNode, () => {
       console.log('input selection change', document.getSelection())
     })
-    const textareaDisposer = createInputSelectionChangeListener(
-      textareaNode,
-      () => {
-        console.log('textarea selection change', document.getSelection())
-      },
-    )
+    const textareaDisposer = createSelectionChangeListener(textareaNode, () => {
+      console.log('textarea selection change', document.getSelection())
+    })
 
     return () => {
       inputDisposer?.()
@@ -50,7 +47,7 @@ export default function Demo() {
     }
 
     const { disposer, restorer } =
-      createInputCacheSelectionListener(inputRestoreNode)
+      createCacheSelectionListener(inputRestoreNode)
 
     inputRestorerRef.current = restorer
     return () => {
