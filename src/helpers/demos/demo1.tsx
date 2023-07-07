@@ -1,22 +1,22 @@
 /**
  * @title input
- * @description caret with input
+ * @description selection with input
  */
 
 /* eslint-disable no-console */
 
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  createInputCacheSelectionListener,
   createInputSelectionChangeListener,
-  restoreInputSelection,
-  saveInputSelection,
 } from 'selection-extra'
 
 export default function Demo() {
   const [input, setInput] = useState('hello world')
   const inputSelectionChangeRef = useRef<HTMLInputElement>(null)
   const textareaSelectionChangeRef = useRef<HTMLTextAreaElement>(null)
-  const inputOnBlurRef = useRef<HTMLInputElement>(null)
+  const inputRestoreRef = useRef<HTMLInputElement>(null)
+  const inputRestorerRef = useRef<() => void>()
 
   useEffect(() => {
     const inputNode = inputSelectionChangeRef.current
@@ -39,6 +39,22 @@ export default function Demo() {
     return () => {
       inputDisposer?.()
       textareaDisposer?.()
+    }
+  }, [])
+
+  useEffect(() => {
+    const inputRestoreNode = inputRestoreRef.current
+
+    if (!inputRestoreNode) {
+      return
+    }
+
+    const { disposer, restorer } =
+      createInputCacheSelectionListener(inputRestoreNode)
+
+    inputRestorerRef.current = restorer
+    return () => {
+      disposer?.()
     }
   }, [])
 
@@ -85,26 +101,23 @@ export default function Demo() {
           onChange={(event) => {
             setInput(event.target.value)
           }}
-          onBlur={(event) => {
-            saveInputSelection(event.target)
-          }}
-          ref={inputOnBlurRef}
+          ref={inputRestoreRef}
         />
         <button
           onClick={() => {
-            restoreInputSelection(inputOnBlurRef.current)
+            inputRestorerRef.current?.()
           }}
         >
-          refocus
+          reselection
         </button>
       </div>
       <button
         onClick={() => {
-          console.log(window.getSelection())
-          console.log(document.activeElement)
+          console.log('getSelection', window.getSelection())
+          console.log('document.activeElement', document.activeElement)
         }}
       >
-        caret
+        print selection
       </button>
     </div>
   )

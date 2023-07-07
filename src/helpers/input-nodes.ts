@@ -1,3 +1,7 @@
+import { isMarkListened } from './attributes'
+
+import { MARK_SELECTION_CHANGE_LISTENED_NAME } from '@/constants'
+
 export type InputNode = HTMLInputElement | HTMLTextAreaElement
 
 export function isInputNode(node?: Node | null): node is InputNode {
@@ -5,6 +9,8 @@ export function isInputNode(node?: Node | null): node is InputNode {
     (item) => node instanceof item,
   )
 }
+
+const INPUT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
 export function createInputSelectionChangeListener<T extends Node>(
   node: T,
@@ -14,28 +20,40 @@ export function createInputSelectionChangeListener<T extends Node>(
     return
   }
 
-  const handler = (event: Event) => {
+  // 确保 selection change 每个节点只监听一次
+  if (isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)) {
+    return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
+  }
+
+  isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)
+
+  const handler = () => {
+    // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/activeElement
     if (document.activeElement === node) {
       callback(node)
     }
   }
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/Document/selectionchange_event
+  // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/selectionchange_event
   document.addEventListener('selectionchange', handler)
 
-  return () => {
+  const disposer = () => {
     document.removeEventListener('selectionchange', handler)
+    INPUT_SELECTION_CHANGE_DISPOSER_MAP.delete(node)
   }
+
+  INPUT_SELECTION_CHANGE_DISPOSER_MAP.set(node, disposer)
+  return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)
 }
 
-const DEFAULT_INPUT_SELECTION_KEY = 'selection-unique'
-const INPUT_SELECTIONS: Record<string, [number, number]> = {}
+const INPUT_SELECTIONS = new Map<InputNode, [number, number]>()
 
-/** 内存中缓存 input node 的 selection 信息，可根据 key 存储不同的信息，默认信息具有唯一性 */
-export function saveInputSelection<T extends Node>(
-  node: T,
-  key = DEFAULT_INPUT_SELECTION_KEY,
-) {
+/**
+ * 内存中缓存 input node 的 selection 信息
+ *
+ * 返回 disposer 函数
+ */
+export function cacheInputSelection<T extends Node>(node: T) {
   if (!isInputNode(node)) {
     return
   }
@@ -45,21 +63,21 @@ export function saveInputSelection<T extends Node>(
     return
   }
 
-  INPUT_SELECTIONS[key] = [node.selectionStart, node.selectionEnd]
+  INPUT_SELECTIONS.set(node, [node.selectionStart, node.selectionEnd])
+
+  return () => {
+    INPUT_SELECTIONS.delete(node)
+  }
 }
 
-export function restoreInputSelection<T extends Node>(
-  node?: T | null,
-  key = DEFAULT_INPUT_SELECTION_KEY,
-) {
+export function restoreInputSelection<T extends Node>(node?: T | null) {
   if (!isInputNode(node)) {
     return
   }
 
-  const cacheSelection = INPUT_SELECTIONS[key]
-
   node.focus()
 
+  const cacheSelection = INPUT_SELECTIONS.get(node)
   if (!cacheSelection) {
     return
   }
@@ -68,21 +86,25 @@ export function restoreInputSelection<T extends Node>(
   node.selectionEnd = cacheSelection[1]
 }
 
-export function createSaveInputSelectionListener<T extends Node>(
+export function createInputCacheSelectionListener<T extends Node>(
   node?: T | null,
-  key = DEFAULT_INPUT_SELECTION_KEY,
 ) {
   if (!isInputNode(node)) {
-    return
+    throw new TypeError(`node is not instance of InputNode`)
   }
 
   const handler = () => {
-    saveInputSelection(node, key)
+    cacheInputSelection(node)
   }
 
   node.addEventListener('blur', handler)
 
-  return () => {
+  const disposer = () => {
     node.removeEventListener('blur', handler)
+  }
+
+  return {
+    disposer,
+    restorer: () => restoreInputSelection(node),
   }
 }

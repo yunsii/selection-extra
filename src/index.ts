@@ -1,6 +1,16 @@
 export {
+  isInputNode,
   createInputSelectionChangeListener,
-  saveInputSelection,
+  cacheInputSelection as saveInputSelection,
   restoreInputSelection,
-  createSaveInputSelectionListener,
+  createInputCacheSelectionListener,
 } from './helpers/input-nodes'
+
+export type { InputNode } from './helpers/input-nodes'
+
+export {
+  createElementSelectionChangeListener,
+  cacheElementSelection,
+  restoreElementSelection,
+  createElementCacheSelectionListener,
+} from './helpers/elements'
