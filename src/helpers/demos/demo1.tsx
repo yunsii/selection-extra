@@ -11,8 +11,10 @@ import {
   createSelectionChangeListener,
 } from 'selection-extra'
 
+const INITIAL_VALUE = 'hello world'
+
 export default function Demo() {
-  const [input, setInput] = useState('hello world')
+  const [input, setInput] = useState(INITIAL_VALUE)
   const inputSelectionChangeRef = useRef<HTMLInputElement>(null)
   const textareaSelectionChangeRef = useRef<HTMLTextAreaElement>(null)
   const inputRestoreRef = useRef<HTMLInputElement>(null)
@@ -100,12 +102,28 @@ export default function Demo() {
           }}
           ref={inputRestoreRef}
         />
+      </div>
+      <div>
         <button
           onClick={() => {
             inputRestorerRef.current?.()
           }}
         >
           reselection
+        </button>
+        <button
+          onClick={() => {
+            setInput(`prefix ${input} postfix`)
+          }}
+        >
+          longer value
+        </button>
+        <button
+          onClick={() => {
+            setInput(INITIAL_VALUE)
+          }}
+        >
+          reset value
         </button>
       </div>
       <button

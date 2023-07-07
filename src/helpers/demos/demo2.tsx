@@ -112,6 +112,15 @@ export default function Demo() {
         >
           reselection
         </button>
+        <button
+          onClick={() => {
+            const span = document.createElement('span')
+            span.textContent = 'hello'
+            divEditableRef.current?.insertAdjacentElement('afterbegin', span)
+          }}
+        >
+          add before
+        </button>
       </div>
       <button
         onClick={() => {
