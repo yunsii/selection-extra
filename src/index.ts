@@ -9,6 +9,7 @@ export {
 export type { InputNode } from './helpers/input-nodes'
 
 export {
+  isContenteditableNode,
   createElementSelectionChangeListener,
   cacheElementSelection,
   restoreElementSelection,
