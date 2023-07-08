@@ -21,6 +21,10 @@
 
 > [`changeset` prerelease doc](https://github.com/changesets/changesets/blob/main/docs/prereleases.md)
 
+## Related
+
+- [use-selection-extra](https://github.com/yunsii/use-selection-extra) - React Hooks for DOM selection manipulation.
+
 ## License
 
 [MIT](./LICENSE) License © 2022 [Yuns](https://github.com/yunsii)
