@@ -49,6 +49,29 @@ export function createElementSelectionChangeListener<T extends HTMLElement>(
 
 const CONTENTEDITABLE_SELECTIONS = new Map<HTMLElement, Range[]>()
 
+let gcWaiting = false
+
+export function contenteditableSelectionsGc() {
+  if (gcWaiting || typeof requestIdleCallback === 'undefined') {
+    return
+  }
+
+  gcWaiting = true
+
+  const gc = () => {
+    CONTENTEDITABLE_SELECTIONS.forEach((_, node) => {
+      if (!node.isConnected) {
+        CONTENTEDITABLE_SELECTIONS.delete(node)
+      }
+    })
+  }
+
+  requestIdleCallback(() => {
+    gc()
+    gcWaiting = false
+  })
+}
+
 /**
  * 内存中缓存 contenteditable node 的 selection 信息
  *
@@ -75,6 +98,9 @@ export function cacheElementSelection<T extends HTMLElement>(node: T) {
   )
 
   CONTENTEDITABLE_SELECTIONS.set(node, ranges)
+
+  // 每次创建新的缓存，都尝试做垃圾回收
+  contenteditableSelectionsGc()
 
   return () => {
     CONTENTEDITABLE_SELECTIONS.delete(node)

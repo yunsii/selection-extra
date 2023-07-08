@@ -44,6 +44,29 @@ export function createInputSelectionChangeListener<T extends InputElement>(
 
 const INPUT_SELECTIONS = new Map<InputElement, [number, number]>()
 
+let gcWaiting = false
+
+export function inputSelectionsGc() {
+  if (gcWaiting || typeof requestIdleCallback === 'undefined') {
+    return
+  }
+
+  gcWaiting = true
+
+  const gc = () => {
+    INPUT_SELECTIONS.forEach((_, node) => {
+      if (!node.isConnected) {
+        INPUT_SELECTIONS.delete(node)
+      }
+    })
+  }
+
+  requestIdleCallback(() => {
+    gc()
+    gcWaiting = false
+  })
+}
+
 /**
  * 内存中缓存 input node 的 selection 信息
  *
@@ -56,6 +79,9 @@ export function cacheInputSelection<T extends InputElement>(node: T) {
   }
 
   INPUT_SELECTIONS.set(node, [node.selectionStart, node.selectionEnd])
+
+  // 每次创建新的缓存，都尝试做垃圾回收
+  inputSelectionsGc()
 
   return () => {
     INPUT_SELECTIONS.delete(node)
