@@ -11,6 +11,14 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "caret",
+    "selection",
+    "getSelection",
+    "createRange",
+    "document",
+    "browser"
+  ],
   "funding": [
     "https://opencollective.com/yuns",
     "https://afdian.net/@yunslove"
