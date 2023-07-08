@@ -13,7 +13,7 @@ const theme: Theme = (props) => {
     topNavs: [
       {
         label: 'selection-extra',
-        href: 'https://github.com/yunsii/starter-vite-react-library',
+        href: 'https://github.com/yunsii/selection-extra',
       },
     ],
     sideNavs: (ctx) => {
