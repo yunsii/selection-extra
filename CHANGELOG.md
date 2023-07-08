@@ -1,5 +1,11 @@
 # selection-extra
 
+## 0.0.4
+
+### Patch Changes
+
+- ✨ feat: drop mark logic
+
 ## 0.0.3
 
 ### Patch Changes
