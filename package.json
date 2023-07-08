@@ -45,10 +45,6 @@
     "test:ui": "vitest --config vite.lib.config.ts --ui",
     "coverage": "vitest run --config vite.lib.config.ts --coverage"
   },
-  "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.3",
     "@antfu/eslint-config-react": "^0.35.3",
