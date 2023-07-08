@@ -2,7 +2,12 @@
 
 [![NPM version](https://img.shields.io/npm/v/selection-extra?color=a1b858&label=)](https://www.npmjs.com/package/selection-extra)
 
-# Build & Publish
+## Principle
+
+- `window.getSelection`
+- `document.createRange`
+
+## Build & Publish
 
 - `npm run build`
 - `npx changeset`
