@@ -27,8 +27,9 @@ export function isContenteditableNodeContains(node?: SelectableNode | null) {
 }
 
 /**
- * 选择 HTMLElement 节点，会判断是否在 contenteditable 节点
- *   - 如果在，则默认 focus 到结尾，可自行定制选择范围
+ * 选择 HTMLElement 节点，会先判断是否为可输入节点，如果是，则默认 focus 该节点末尾，可自行定制选择范围，
+ * 再判断是否在 contenteditable 节点中：
+ *   - 如果在，则默认 focus 到末尾，可自行定制选择范围
  *   - 如果不在，因为此时节点不能 focus，则默认使用选择整个节点的方式代替，可自行定制选择范围
  */
 export function selectNode<T extends HTMLElement>(
@@ -37,7 +38,9 @@ export function selectNode<T extends HTMLElement>(
 ): void
 
 /**
- * 选择 Text 节点，默认 focus 到末尾，可自行定制选择范围
+ * 选择 Text 节点，判断是否在 contenteditable 节点中：
+ *   - 如果在，则默认 focus 到末尾，可自行定制选择范围
+ *   - 如果不在，因为此时节点不能 focus，则默认使用选择整个节点的方式代替，可自行定制选择范围
  */
 export function selectNode<T extends Text>(
   node: T,
