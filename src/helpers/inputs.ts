@@ -1,7 +1,3 @@
-import { isMarkListened } from './attributes'
-
-import { MARK_SELECTION_CHANGE_LISTENED_NAME } from '@/constants'
-
 export type InputElement = HTMLInputElement | HTMLTextAreaElement
 
 export function isInputNode(node?: Node | null): node is InputElement {
@@ -16,13 +12,6 @@ export function createInputSelectionChangeListener<T extends InputElement>(
   node: T,
   callback: (node: T) => void,
 ) {
-  // 确保 selection change 每个节点只监听一次
-  if (isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)) {
-    return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
-  }
-
-  isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)
-
   const handler = () => {
     // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/activeElement
     if (document.activeElement === node) {

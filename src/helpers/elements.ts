@@ -1,7 +1,4 @@
-import { isMarkListened, markListened } from './attributes'
 import { selectNode } from './nodes'
-
-import { MARK_SELECTION_CHANGE_LISTENED_NAME } from '@/constants'
 
 const ELEMENT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
@@ -14,13 +11,6 @@ export function createElementSelectionChangeListener<T extends HTMLElement>(
   node: T,
   callback: (node: T) => void,
 ) {
-  // 确保 selection change 每个节点只监听一次
-  if (isMarkListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)) {
-    return ELEMENT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
-  }
-
-  markListened(node, MARK_SELECTION_CHANGE_LISTENED_NAME)
-
   const handler = () => {
     const selection = window.getSelection()
     if (!selection) {
