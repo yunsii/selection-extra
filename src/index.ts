@@ -6,13 +6,18 @@ import {
   createInputCacheSelectionListener,
   createInputSelectionChangeListener,
   isInputNode,
-} from './helpers/input-nodes'
+} from './helpers/inputs'
 
-export { isInputNode } from './helpers/input-nodes'
+export { isInputNode } from './helpers/inputs'
 
-export type { InputNode } from './helpers/input-nodes'
+export type { InputElement } from './helpers/inputs'
 
-export { isContenteditableNode } from './helpers/elements'
+export {
+  contenteditableSelector,
+  selectNode,
+  isContenteditableNode,
+  isContenteditableNodeContains,
+} from './helpers/nodes'
 
 export function createSelectionChangeListener<T extends Node>(
   node: T,

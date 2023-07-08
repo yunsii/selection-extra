@@ -1,15 +1,7 @@
 import { isMarkListened, markListened } from './attributes'
+import { selectNode } from './nodes'
 
 import { MARK_SELECTION_CHANGE_LISTENED_NAME } from '@/constants'
-
-export function isContenteditableNode(node?: Node | null): node is HTMLElement {
-  return (
-    node instanceof HTMLElement &&
-    ['true', 'plaintext-only'].includes(
-      node.getAttribute('contenteditable') || 'false',
-    )
-  )
-}
 
 const ELEMENT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
@@ -97,15 +89,8 @@ export function restoreElementSelection<T extends HTMLElement>(node: T) {
     return
   }
 
-  const selection = window.getSelection()
-
-  if (!selection) {
-    return
-  }
-
-  selection.removeAllRanges()
   cacheRanges.forEach((item) => {
-    selection.addRange(item)
+    selectNode(node, item)
   })
 }
 

@@ -2,9 +2,9 @@ import { isMarkListened } from './attributes'
 
 import { MARK_SELECTION_CHANGE_LISTENED_NAME } from '@/constants'
 
-export type InputNode = HTMLInputElement | HTMLTextAreaElement
+export type InputElement = HTMLInputElement | HTMLTextAreaElement
 
-export function isInputNode(node?: Node | null): node is InputNode {
+export function isInputNode(node?: Node | null): node is InputElement {
   return [HTMLInputElement, HTMLTextAreaElement].some(
     (item) => node instanceof item,
   )
@@ -12,7 +12,7 @@ export function isInputNode(node?: Node | null): node is InputNode {
 
 const INPUT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
-export function createInputSelectionChangeListener<T extends InputNode>(
+export function createInputSelectionChangeListener<T extends InputElement>(
   node: T,
   callback: (node: T) => void,
 ) {
@@ -42,14 +42,14 @@ export function createInputSelectionChangeListener<T extends InputNode>(
   return INPUT_SELECTION_CHANGE_DISPOSER_MAP.get(node)!
 }
 
-const INPUT_SELECTIONS = new Map<InputNode, [number, number]>()
+const INPUT_SELECTIONS = new Map<InputElement, [number, number]>()
 
 /**
  * 内存中缓存 input node 的 selection 信息
  *
  * 返回 disposer 函数
  */
-export function cacheInputSelection<T extends InputNode>(node: T) {
+export function cacheInputSelection<T extends InputElement>(node: T) {
   // node 未被选择过
   if (!node.selectionStart || !node.selectionEnd) {
     return
@@ -62,7 +62,7 @@ export function cacheInputSelection<T extends InputNode>(node: T) {
   }
 }
 
-export function restoreInputSelection<T extends InputNode>(node: T) {
+export function restoreInputSelection<T extends InputElement>(node: T) {
   node.focus()
 
   const cacheSelection = INPUT_SELECTIONS.get(node)
@@ -78,7 +78,7 @@ export function createInputCacheSelectionListener<T extends Node>(
   node?: T | null,
 ) {
   if (!isInputNode(node)) {
-    throw new TypeError(`node is not instance of InputNode`)
+    throw new TypeError(`node is not instance of InputElement`)
   }
 
   const handler = () => {
