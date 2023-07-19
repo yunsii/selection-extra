@@ -1,5 +1,11 @@
 # selection-extra
 
+## 0.0.5
+
+### Patch Changes
+
+- 🐛 fix: selection change of non-contenteditable
+
 ## 0.0.4
 
 ### Patch Changes
