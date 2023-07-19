@@ -1,4 +1,4 @@
-import { selectNode } from './nodes'
+import { isContenteditableNodeContains, selectNode } from './nodes'
 
 const ELEMENT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 
@@ -17,11 +17,21 @@ export function createElementSelectionChangeListener<T extends HTMLElement>(
       return
     }
 
+    // 如果 selection 范围都在指定 node 范围内，才算触发 selection change
     if (
       node.contains(selection.anchorNode) &&
       node.contains(selection.focusNode)
     ) {
-      callback(node)
+      if (isContenteditableNodeContains(node)) {
+        callback(node)
+      } else {
+        // 如果**不是在 contenteditable 节点内**，只有 range selection 才触发 selection change，
+        // 因为此时如果鼠标点击平行于节点外的空间，也会触发 caret selection 变更事件，
+        // 不可编辑的普通 DOM 节点对于用户来说 caret selection 变更事件没有意义。
+        if (selection.type.toLowerCase() === 'range') {
+          callback(node)
+        }
+      }
     }
   }
 

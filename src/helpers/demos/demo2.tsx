@@ -12,35 +12,45 @@ import {
 } from 'selection-extra'
 
 export default function Demo() {
-  const divRef = useRef<HTMLDivElement>(null)
-  const divRestorerRef = useRef<() => void>()
-  const divEditableRef = useRef<HTMLDivElement>(null)
-  const divEditableRestorerRef = useRef<() => void>()
+  const divEditable1Ref = useRef<HTMLDivElement>(null)
+  const divEditable2Ref = useRef<HTMLDivElement>(null)
+  const divEditableRestorer2Ref = useRef<() => void>()
 
   useEffect(() => {
-    const divNode = divRef.current
+    const divEditable1Node = divEditable1Ref.current
 
-    if (!divNode) {
+    if (!divEditable1Node) {
       return
     }
 
-    const { disposer, restorer } = createCacheSelectionListener(divNode)
+    const divSelection1ChangeDisposer = createSelectionChangeListener(
+      divEditable1Node,
+      () => {
+        console.log(
+          'contentEditable div selection change',
+          document.getSelection(),
+        )
+      },
+    )
 
-    divRestorerRef.current = restorer
     return () => {
-      disposer?.()
+      divSelection1ChangeDisposer?.()
     }
   }, [])
 
   useEffect(() => {
-    const divEditableNode = divEditableRef.current
+    const divEditable2Node = divEditable2Ref.current
 
-    if (!divEditableNode) {
+    if (!divEditable2Node) {
       return
     }
 
+    console.log(
+      '🚀 ~ file: demo2.tsx:39 ~ useEffect ~ divEditableNode:',
+      divEditable2Node,
+    )
     const divSelectionChangeDisposer = createSelectionChangeListener(
-      divEditableNode,
+      divEditable2Node,
       () => {
         console.log(
           'contentEditable div selection change',
@@ -52,9 +62,9 @@ export default function Demo() {
     const {
       disposer: elementCacheSelectionDisposer,
       restorer: elementCacheSelectionRestorer,
-    } = createCacheSelectionListener(divEditableNode)
+    } = createCacheSelectionListener(divEditable2Node)
 
-    divEditableRestorerRef.current = elementCacheSelectionRestorer
+    divEditableRestorer2Ref.current = elementCacheSelectionRestorer
 
     return () => {
       divSelectionChangeDisposer?.()
@@ -65,28 +75,10 @@ export default function Demo() {
   return (
     <div>
       <div>
-        Ref div
-        <div
-          ref={divRef}
-          style={{
-            border: '1px solid gray',
-          }}
-        >
-          <strong>hello world</strong>
-        </div>
-        <button
-          onClick={() => {
-            divRestorerRef.current?.()
-          }}
-        >
-          reselection
-        </button>
-      </div>
-      <div>
         Ref contentEditable div addEventListener selectionChange
         <div
           contentEditable
-          ref={divEditableRef}
+          ref={divEditable1Ref}
           style={{
             border: '1px solid gray',
           }}
@@ -98,7 +90,7 @@ export default function Demo() {
         React contenteditable restore selection
         <div
           contentEditable
-          ref={divEditableRef}
+          ref={divEditable2Ref}
           style={{
             border: '1px solid gray',
           }}
@@ -107,7 +99,7 @@ export default function Demo() {
         </div>
         <button
           onClick={() => {
-            divEditableRestorerRef.current?.()
+            divEditableRestorer2Ref.current?.()
           }}
         >
           reselection
@@ -116,7 +108,7 @@ export default function Demo() {
           onClick={() => {
             const span = document.createElement('span')
             span.textContent = 'hello'
-            divEditableRef.current?.insertAdjacentElement('afterbegin', span)
+            divEditable2Ref.current?.insertAdjacentElement('afterbegin', span)
           }}
         >
           add before

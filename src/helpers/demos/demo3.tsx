@@ -1,208 +1,113 @@
 /**
- * @title selectNode
- * @description select any node
+ * @title non-contenteditable
+ * @description selection with non-contenteditable
  */
 
 /* eslint-disable no-console */
 
-import React, { useRef } from 'react'
-
-import { selectNode } from '../nodes'
-import { isInputNode } from '../inputs'
+import React, { useEffect, useRef } from 'react'
+import {
+  createCacheSelectionListener,
+  createSelectionChangeListener,
+} from 'selection-extra'
 
 export default function Demo() {
-  const nonEditableElementRef = useRef<HTMLDivElement>(null)
-  const editableElementRef = useRef<HTMLDivElement>(null)
+  const divNonEditable1Ref = useRef<HTMLDivElement>(null)
+  const divNonEditable2Ref = useRef<HTMLDivElement>(null)
+  const divNonEditable2RestorerRef = useRef<() => void>()
 
-  function selectText(
-    domRef: React.RefObject<HTMLDivElement>,
-    range?: [number, number],
-  ) {
-    const textNode = Array.from(domRef.current?.childNodes || []).find(
-      (item) => item instanceof Text,
-    ) as Text | null
+  useEffect(() => {
+    const divNonEditable1Node = divNonEditable1Ref.current
 
-    if (!textNode) {
-      console.log('textNode not found')
+    if (!divNonEditable1Node) {
       return
     }
-    selectNode(textNode, range)
-  }
 
-  function selectElement(
-    domRef: React.RefObject<HTMLDivElement>,
-    range?: [number, number],
-  ) {
-    const element = Array.from(domRef.current?.childNodes || []).find(
-      (item) => !(item instanceof Text),
-    ) as HTMLElement | null
+    const disposer = createSelectionChangeListener(divNonEditable1Node, () => {
+      console.log(
+        'non-contentEditable div selection change',
+        document.getSelection(),
+      )
+    })
 
-    if (!element) {
-      console.log('element not found')
+    return () => {
+      disposer?.()
+    }
+  }, [])
+
+  useEffect(() => {
+    const divNonEditable2Node = divNonEditable2Ref.current
+
+    if (!divNonEditable2Node) {
       return
     }
-    selectNode(element, range)
-  }
 
-  function selectInput(
-    domRef: React.RefObject<HTMLDivElement>,
-    range?: [number, number],
-  ) {
-    const inputNode = Array.from(domRef.current?.childNodes || []).find(
-      (item) => isInputNode(item),
-    ) as Text | null
+    const divSelectionChangeDisposer = createSelectionChangeListener(
+      divNonEditable2Node,
+      () => {
+        console.log(
+          'non-contentEditable div selection change',
+          document.getSelection(),
+        )
+      },
+    )
 
-    if (!inputNode) {
-      console.log('inputNode not found')
-      return
+    const {
+      disposer: elementCacheSelectionDisposer,
+      restorer: elementCacheSelectionRestorer,
+    } = createCacheSelectionListener(divNonEditable2Node)
+
+    divNonEditable2RestorerRef.current = elementCacheSelectionRestorer
+
+    return () => {
+      divSelectionChangeDisposer?.()
+      elementCacheSelectionDisposer?.()
     }
-    selectNode(inputNode, range)
-  }
+  }, [])
 
   return (
     <div>
       <div>
+        Ref non-contentEditable div addEventListener selectionChange
         <div
+          ref={divNonEditable1Ref}
           style={{
             border: '1px solid gray',
           }}
-          ref={nonEditableElementRef}
         >
-          <h1>
-            non-contentEditable <span>container</span>
-          </h1>
-          <h2>foo</h2>
-          bar
-          <input defaultValue='hello world' />
-          <br />
-          <strong>hello world</strong>
-        </div>
-        <div
-          contentEditable
-          style={{
-            border: '1px solid gray',
-          }}
-          ref={editableElementRef}
-        >
-          <h1>
-            contentEditable <span>container</span>
-          </h1>
-          <h2>foo</h2>
-          bar
-          <input defaultValue='hello world' />
-          <br />
-          <strong>hello world</strong>
+          <strong>hello world 111</strong>
         </div>
       </div>
       <div>
-        <p>non-contentEditable</p>
-        <button
-          onClick={() => {
-            selectText(nonEditableElementRef)
+        React non-contenteditable restore selection
+        <div
+          ref={divNonEditable2Ref}
+          style={{
+            border: '1px solid gray',
           }}
         >
-          selection text
+          <strong>hello world 222</strong>
+        </div>
+        <button
+          onClick={() => {
+            divNonEditable2RestorerRef.current?.()
+          }}
+        >
+          reselection
         </button>
         <button
           onClick={() => {
-            selectText(nonEditableElementRef, [0, 2])
+            const span = document.createElement('span')
+            span.textContent = 'hello'
+            divNonEditable2Ref.current?.insertAdjacentElement(
+              'afterbegin',
+              span,
+            )
           }}
         >
-          selection text with [0, 2]
-        </button>
-        <button
-          onClick={() => {
-            selectText(nonEditableElementRef, [2, 2])
-          }}
-        >
-          *selection text with [2, 2]
-        </button>
-        <button
-          onClick={() => {
-            selectElement(nonEditableElementRef)
-          }}
-        >
-          selection html element
-        </button>
-        <button
-          onClick={() => {
-            selectElement(nonEditableElementRef, [1, 2])
-          }}
-        >
-          selection html element with [1, 2]
-        </button>
-        <br />
-        <button
-          onClick={() => {
-            selectInput(nonEditableElementRef)
-          }}
-        >
-          selection input
-        </button>
-        <button
-          onClick={() => {
-            selectInput(nonEditableElementRef, [0, 2])
-          }}
-        >
-          selection input with [0, 2]
-        </button>
-        <p style={{ margin: 'unset' }}>
-          *非 contentEditable 容器 range start/end 值相等时无效果
-        </p>
-        <br />
-        <p>contentEditable</p>
-        <button
-          onClick={() => {
-            selectText(editableElementRef)
-          }}
-        >
-          selection text
-        </button>
-        <button
-          onClick={() => {
-            selectText(editableElementRef, [0, 2])
-          }}
-        >
-          selection text with [0, 2]
-        </button>
-        <button
-          onClick={() => {
-            selectText(editableElementRef, [2, 2])
-          }}
-        >
-          selection text with [2, 2]
-        </button>
-        <button
-          onClick={() => {
-            selectElement(editableElementRef)
-          }}
-        >
-          selection html element
-        </button>
-        <button
-          onClick={() => {
-            selectElement(editableElementRef, [1, 2])
-          }}
-        >
-          selection html element with [1, 2]
-        </button>
-        <br />
-        <button
-          onClick={() => {
-            selectInput(editableElementRef)
-          }}
-        >
-          selection input
-        </button>
-        <button
-          onClick={() => {
-            selectInput(editableElementRef, [0, 2])
-          }}
-        >
-          selection input with [0, 2]
+          add before
         </button>
       </div>
-      <br />
       <button
         onClick={() => {
           console.log('getSelection', window.getSelection())
