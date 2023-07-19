@@ -27,7 +27,7 @@ export default function Demo() {
       divEditable1Node,
       () => {
         console.log(
-          'contentEditable div selection change',
+          'contenteditable div selection change',
           document.getSelection(),
         )
       },
@@ -53,7 +53,7 @@ export default function Demo() {
       divEditable2Node,
       () => {
         console.log(
-          'contentEditable div selection change',
+          'contenteditable div selection change',
           document.getSelection(),
         )
       },
@@ -75,7 +75,7 @@ export default function Demo() {
   return (
     <div>
       <div>
-        Ref contentEditable div addEventListener selectionChange
+        Ref contenteditable div addEventListener selectionChange
         <div
           contentEditable
           ref={divEditable1Ref}

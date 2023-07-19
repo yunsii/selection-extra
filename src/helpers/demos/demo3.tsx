@@ -25,7 +25,7 @@ export default function Demo() {
 
     const disposer = createSelectionChangeListener(divNonEditable1Node, () => {
       console.log(
-        'non-contentEditable div selection change',
+        'non-contenteditable div selection change',
         document.getSelection(),
       )
     })
@@ -46,7 +46,7 @@ export default function Demo() {
       divNonEditable2Node,
       () => {
         console.log(
-          'non-contentEditable div selection change',
+          'non-contenteditable div selection change',
           document.getSelection(),
         )
       },
@@ -68,7 +68,7 @@ export default function Demo() {
   return (
     <div>
       <div>
-        Ref non-contentEditable div addEventListener selectionChange
+        Ref non-contenteditable div addEventListener selectionChange
         <div
           ref={divNonEditable1Ref}
           style={{

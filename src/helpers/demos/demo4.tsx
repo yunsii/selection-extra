@@ -69,7 +69,7 @@ export default function Demo() {
           ref={nonEditableElementRef}
         >
           <h1>
-            non-contentEditable <span>container</span>
+            non-contenteditable <span>container</span>
           </h1>
           <h2>foo</h2>
           bar
@@ -85,7 +85,7 @@ export default function Demo() {
           ref={editableElementRef}
         >
           <h1>
-            contentEditable <span>container</span>
+            contenteditable <span>container</span>
           </h1>
           <h2>foo</h2>
           bar
@@ -95,7 +95,7 @@ export default function Demo() {
         </div>
       </div>
       <div>
-        <p>non-contentEditable</p>
+        <p>non-contenteditable</p>
         <button
           onClick={() => {
             selectText(nonEditableElementRef)
@@ -147,10 +147,10 @@ export default function Demo() {
           selection input with [0, 2]
         </button>
         <p style={{ margin: 'unset' }}>
-          *非 contentEditable 容器 range start/end 值相等时无效果
+          *非 contenteditable 容器 range start/end 值相等时无效果
         </p>
         <br />
-        <p>contentEditable</p>
+        <p>contenteditable</p>
         <button
           onClick={() => {
             selectText(editableElementRef)
