@@ -1,5 +1,11 @@
 # selection-extra
 
+## 0.0.6
+
+### Patch Changes
+
+- 📦 refactor: rename common to utils
+
 ## 0.0.5
 
 ### Patch Changes
