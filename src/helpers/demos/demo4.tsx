@@ -8,7 +8,7 @@
 import React, { useRef } from 'react'
 
 import { selectNode } from '../nodes'
-import { isInputNode } from '../inputs'
+import { isInputNode } from '../utils'
 
 export default function Demo() {
   const nonEditableElementRef = useRef<HTMLDivElement>(null)
