@@ -2,15 +2,15 @@ import {
   createElementCacheSelectionListener,
   createElementSelectionChangeListener,
 } from './helpers/elements'
+import { isInputNode } from './helpers/utils'
 import {
   createInputCacheSelectionListener,
   createInputSelectionChangeListener,
-  isInputNode,
 } from './helpers/inputs'
 
-export { isInputNode } from './helpers/inputs'
+export { isInputNode } from './helpers/utils'
 
-export type { InputElement } from './helpers/inputs'
+export type { InputElement } from './helpers/utils'
 
 export {
   contenteditableSelector,

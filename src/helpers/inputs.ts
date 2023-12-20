@@ -1,10 +1,4 @@
-export type InputElement = HTMLInputElement | HTMLTextAreaElement
-
-export function isInputNode(node?: Node | null): node is InputElement {
-  return [HTMLInputElement, HTMLTextAreaElement].some(
-    (item) => node instanceof item,
-  )
-}
+import { type InputElement, isInputNode } from './utils'
 
 const INPUT_SELECTION_CHANGE_DISPOSER_MAP = new Map<HTMLElement, () => void>()
 

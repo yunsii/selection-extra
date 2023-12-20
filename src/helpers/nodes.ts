@@ -1,4 +1,4 @@
-import { isInputNode } from './inputs'
+import { isInputNode } from './utils'
 
 export type SelectableNode = HTMLElement | Text
 
